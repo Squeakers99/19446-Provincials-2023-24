@@ -193,13 +193,10 @@ public class DriveControlled446 extends LinearOpMode {
             telemetry.addData("Lift Left Position:", liftLeft.getCurrentPosition());
             telemetry.addData("Lift Right Position:", liftRight.getCurrentPosition());
 
-            //Intake Servo telemetry
-            telemetry.addData("Intake Left Position: ", frontIntake1.getPosition());
-            telemetry.addData("Intake Right Position: ", frontIntake2.getPosition());
-
-            //Outtake telemetry
+            //Arm and Outtake Telemetry
             telemetry.addData("Outtake Power: ", outtake.getPower());
-            //telemetry.addData("Flipper position: ", flipper.getPosition());
+            telemetry.addData("Arm Position: ", arm.getPosition());
+            telemetry.addData("Wrist Position: ", wrist.getPosition());
             telemetry.update();
         }
     }
