@@ -17,18 +17,12 @@ public class Adjustment extends LinearOpMode {
     private DcMotor liftLeft;
     private DcMotor liftRight;
 
-    //Servo Definitions
-    private Servo flipper;
-
     @Override
     public void runOpMode() {
         //Secondary system DC motors
         sliderMotor = hardwareMap.get(DcMotor.class, "sliderMotor");
         liftLeft = hardwareMap.get(DcMotor.class, "liftLeft");
         liftRight = hardwareMap.get(DcMotor.class, "liftRight");
-
-        //Reverse left side motors and slider Motor
-        sliderMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //Encoder Setup
         sliderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -43,12 +37,6 @@ public class Adjustment extends LinearOpMode {
         liftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        //Servo Mapping
-        flipper = hardwareMap.get(Servo.class, "flipper");
-
-        //Flipper Variables
-        double flipperPos = 0;
-
         //Slider Positioning
         double sliderPos;
         double sliderPower;
@@ -59,17 +47,6 @@ public class Adjustment extends LinearOpMode {
             return;
 
         while (opModeIsActive()) {
-            //Flipper
-            if(gamepad1.right_bumper){
-                flipperPos += 0.05;
-                flipper.setPosition(flipperPos);
-            }else if(gamepad1.left_bumper){
-                flipperPos -= 0.05;
-                flipper.setPosition(flipperPos);
-            }
-
-            //flipper.setPosition(flipperPos);
-
             //Linear Actuators
             if(gamepad2.right_stick_y < 0){
                 liftRight.setPower(1);
@@ -87,14 +64,8 @@ public class Adjustment extends LinearOpMode {
             }
 
             //Slider
-            if(-gamepad1.right_stick_y > 0){
-                sliderMotor.setPower(1);
-            }else if(-gamepad1.right_stick_y < 0){
-                sliderMotor.setPower(-1);
-            }else{
-                sliderMotor.setPower(0);
-            }
-            sleep(20);
+            sliderMotor.setPower(-gamepad1.right_stick_y);
+
             //Telemetry
             telemetry.addData("Slider Power: ", sliderMotor.getPower());
             telemetry.addData("Slider Position: ", sliderMotor.getCurrentPosition());
@@ -102,7 +73,6 @@ public class Adjustment extends LinearOpMode {
             telemetry.addData("Lift Right Power:", liftRight.getPower());
             telemetry.addData("Lift Left Position:", liftLeft.getCurrentPosition());
             telemetry.addData("Lift Right Position:", liftRight.getCurrentPosition());
-            telemetry.addData("Flipper position: ", flipper.getPosition());
             telemetry.update();
         }
     }
