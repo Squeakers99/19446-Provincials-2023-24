@@ -81,6 +81,10 @@ public class DriveControlled446 extends OpMode {
         liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+        motorBL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorFL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorFR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorBR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         sliderMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -100,25 +104,20 @@ public class DriveControlled446 extends OpMode {
     public void loop() {
         // Gamepad inputs
         double y = -gamepad1.left_stick_y; // Reverse the y-axis (if needed)
-        double x = gamepad1.right_stick_x * 1.1; //Counteracts imperfect strafing
-        double rotation = (gamepad1.left_stick_x)*0.75;
+        double x = -gamepad1.right_stick_x * 1.1; //Counteracts imperfect strafing
+        double rotation = gamepad1.left_stick_x*0.75;
 
         // Calculate motor powers
-        double frontLeftPower = y + x + rotation;
-        double frontRightPower = y - x - rotation;
-        double backLeftPower = y - x + rotation;
-        double backRightPower = y + x - rotation;
+        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rotation), 1);
+        double frontLeftPower = (y + x + rotation) / denominator;
+        double backLeftPower = (y - x + rotation) / denominator;
+        double frontRightPower = (y - x - rotation) / denominator;
+        double backRightPower = (y + x - rotation) / denominator;
 
-        // Clip motor powers to ensure they are within the valid range [-1, 1]
-        frontLeftPower = Range.clip(frontLeftPower, -1, 1);
-        frontRightPower = Range.clip(frontRightPower, -1, 1);
-        backLeftPower = Range.clip(backLeftPower, -1, 1);
-        backRightPower = Range.clip(backRightPower, -1, 1);
-
-        // Set motor powers
+        //Sets motor powers
         motorFL.setPower(frontLeftPower);
-        motorFR.setPower(frontRightPower);
         motorBL.setPower(backLeftPower);
+        motorFR.setPower(frontRightPower);
         motorBR.setPower(backRightPower);
 
         //Intake Motor Code
@@ -189,6 +188,11 @@ public class DriveControlled446 extends OpMode {
         telemetry.addData("LB Power:", motorBL.getPower());
         telemetry.addData("RF Power:", motorFR.getPower());
         telemetry.addData("RB Power:", motorBR.getPower());
+
+        telemetry.addData("LF Encoder:",motorFL.getCurrentPosition());
+        telemetry.addData("LB Encoder:",motorBL.getCurrentPosition());
+        telemetry.addData("RF Encoder:",motorFR.getCurrentPosition());
+        telemetry.addData("RB Encoder:",motorBR.getCurrentPosition());
 
         //Intake Motor telemetry
         telemetry.addData("Intake Motor Power: ", intakeMotor.getPower());
