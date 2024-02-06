@@ -34,6 +34,9 @@ public class ArmProgramming extends LinearOpMode {
             return;
 
         while (opModeIsActive()) {
+            arm.setPosition(0);
+            wrist.setPosition(0);
+            /*
             if(gamepad1.y && wristPos <= 1.0 && wristPos >= 0.0){
                 wristPos += 0.01;
                 sleep(1000);
@@ -54,6 +57,7 @@ public class ArmProgramming extends LinearOpMode {
             telemetry.addData("Wrist Position: ", wristPos);
             telemetry.addData("Arm Position: ", armPos);
             telemetry.update();
+            */
         }
     }
 }

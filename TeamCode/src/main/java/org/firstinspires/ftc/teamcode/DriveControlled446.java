@@ -32,8 +32,8 @@ public class DriveControlled446 extends OpMode {
     boolean placementReady = false;
     double armPos;
     double wristPos;
-    double intakeReady_Wrist = 0.33;
-    double intakeReady_Arm = 0.2;
+    double intakeReady_Wrist = 0;
+    double intakeReady_Arm = 0;
     double placementReady_Wrist = 0.7;
     double placementReady_Arm = 0.0;
 
@@ -92,10 +92,6 @@ public class DriveControlled446 extends OpMode {
 
     @Override
     public void init_loop(){
-        //Arm Variables
-        double intakeReady_Wrist = 0.33;
-        double intakeReady_Arm = 0.2;
-
         arm.setPosition(intakeReady_Arm);
         wrist.setPosition(intakeReady_Wrist);
     }
@@ -121,21 +117,24 @@ public class DriveControlled446 extends OpMode {
         motorBR.setPower(backRightPower);
 
         //Intake Motor Code
-        if (gamepad2.a && !intakeOn){
+        if (gamepad2.right_bumper){
             intakeMotor.setPower(0.5);
             outtake.setPower(-1);
             intakeOn = true;
-            justWait(500);
-        }else if (gamepad2.a && intakeOn){
+        }else if(!gamepad2.left_bumper && !gamepad2.right_bumper){
             intakeMotor.setPower(0);
             outtake.setPower(0);
             intakeOn = false;
         }
 
-        if (gamepad2.left_bumper && !intakeOn){
+        if (gamepad2.left_bumper){
             intakeMotor.setPower(-0.5);
             outtake.setPower(1);
             intakeOn = true;
+        }else if(!gamepad2.left_bumper && !gamepad2.right_bumper){
+            intakeMotor.setPower(0);
+            outtake.setPower(0);
+            intakeOn = false;
         }
 
         //Arm Code
@@ -146,15 +145,13 @@ public class DriveControlled446 extends OpMode {
         }else if(gamepad2.dpad_down && placementReady){
             arm.setPosition(intakeReady_Arm);
             wrist.setPosition(intakeReady_Wrist);
-            sliderMotor.setTargetPosition(0);
-            sliderMotor.setPower(0);
             placementReady = false;
         }
 
         //Encoder Values for the lift
         if(gamepad1.right_trigger == 1){
-            liftLeft.setTargetPosition(12000);
-            liftRight.setTargetPosition(12000);
+            liftLeft.setTargetPosition(13000);
+            liftRight.setTargetPosition(13000);
             liftLeft.setPower(1);
             liftRight.setPower(1);
         }else if(gamepad1.left_trigger == 1){
@@ -164,23 +161,15 @@ public class DriveControlled446 extends OpMode {
             liftRight.setPower(1);
         }
 
-        //Pixel Release
-        if(gamepad2.right_bumper){
-            outtake.setPower(1);
-        }else if(gamepad2.left_bumper){
-            outtake.setPower(1);
-        }
-
         //Slider Control
         sliderPower = -gamepad2.right_stick_y;
         sliderPos = sliderMotor.getCurrentPosition();
+        sliderMotor.setPower(sliderPower);
 
-        if((sliderPos >= -25) && (sliderPower != 0)){
-            sliderMotor.setPower(sliderPower);
-        }else if (sliderPower == 0){
-            sliderMotor.setPower(0);
-        }else if((sliderPos >= -100) && (sliderPos <= sliderMax) && (sliderPower != 0)){
-            sliderMotor.setPower(0);
+        if(gamepad2.a){
+            sliderMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            sliderMotor.setTargetPosition(0);
+            sliderMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
 
         // Drivetrain Telemetry
@@ -216,6 +205,8 @@ public class DriveControlled446 extends OpMode {
 
     @Override
     public void stop(){
+        arm.setPosition(intakeReady_Arm);
+        wrist.setPosition(intakeReady_Wrist);
     }
 
     private void justWait(int miliseconds){
