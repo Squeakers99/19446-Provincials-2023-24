@@ -23,10 +23,9 @@ public class ArmProgramming extends LinearOpMode {
         wrist = hardwareMap.get(Servo.class,"wrist");
 
         wrist.setDirection(Servo.Direction.REVERSE);
-        arm.setDirection(Servo.Direction.REVERSE);
 
-        double armPos = 0.25;
-        double wristPos = 0.28;
+        double armPos = 0.0;
+        double wristPos = 0.0;
         
         waitForStart();
 
@@ -34,20 +33,17 @@ public class ArmProgramming extends LinearOpMode {
             return;
 
         while (opModeIsActive()) {
-            arm.setPosition(0);
-            wrist.setPosition(0);
-            /*
             if(gamepad1.y && wristPos <= 1.0 && wristPos >= 0.0){
-                wristPos += 0.01;
+                wristPos += 0.05;
                 sleep(1000);
             }else if(gamepad1.x && wristPos <= 1.0 && wristPos >= 0.0){
-                wristPos -= 0.01;
+                wristPos -= 0.05;
                 sleep(1000);
             }else if(gamepad1.dpad_up && armPos <= 1.0 && armPos >= 0.0){
-                armPos += 0.01;
+                armPos += 0.05;
                 sleep(1000);
             }else if(gamepad1.dpad_down && armPos <= 1.0 && armPos >= 0.0){
-                armPos -= 0.01;
+                armPos -= 0.05;
                 sleep(1000);
             }
 
@@ -57,7 +53,6 @@ public class ArmProgramming extends LinearOpMode {
             telemetry.addData("Wrist Position: ", wristPos);
             telemetry.addData("Arm Position: ", armPos);
             telemetry.update();
-            */
         }
     }
 }
